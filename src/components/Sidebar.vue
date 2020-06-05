@@ -1,63 +1,56 @@
 <template>
-  <aside
-    v-bind:class="['sidebar', { collapsed: isCollapsed, hovered: isHovered }]"
-  >
+  <aside :class="['sidebar', { collapsed: isCollapsed, hovered: isHovered }]">
     <div class="sidebar-inner">
       <div class="sidebar-top">
         <div v-if="shouldDisplayLogo" class="logo-container">
-          <img v-bind:src="logoUrl" alt="" />
+          <img :src="logoUrl" alt="" />
         </div>
         <span
           v-if="shouldDisplayBrandName"
           class="sidebar-top-title"
-          v-bind:style="{ color: brandNameColor }"
+          :style="{ color: brandNameColor }"
         >
           {{ brandName }}
         </span>
       </div>
       <ul
         class="menu-list"
-        v-on:mouseover="handleMouseOver"
-        v-on:mouseleave="handleMouseLeave"
+        @mouseover="handleMouseOver"
+        @mouseleave="handleMouseLeave"
       >
         <li
           v-for="menuItem in menuItemList"
-          v-bind:key="menuItem.id"
-          v-bind:class="[
-            'menu-item',
-            { active: isMenuItemActive(menuItem.id) }
-          ]"
-          v-bind:data-expanded="Boolean(menuItem.isOpen)"
+          :key="menuItem.id"
+          :class="['menu-item', { active: isMenuItemActive(menuItem.id) }]"
+          :data-expanded="Boolean(menuItem.isOpen)"
         >
           <component
+            :is="menuItem.children ? 'button' : 'router-link'"
             class="menu-link"
-            v-bind:is="menuItem.children ? 'button' : 'router-link'"
-            v-bind:to="menuItem.children ? undefined : menuItem.path"
-            v-on:click="
-              menuItem.children ? toggleMenuItem(menuItem.id) : undefined
-            "
+            :to="menuItem.children ? undefined : menuItem.path"
+            @click="menuItem.children ? toggleMenuItem(menuItem.id) : undefined"
           >
             <span class="menu-link-icon-container">
-              <svg-icon v-bind:name="menuItem.icon" />
+              <svg-icon :name="menuItem.icon" />
             </span>
             <span class="menu-link-name">{{ menuItem.name }}</span>
             <span
-              class="arrow-icon-container"
               v-show="Array.isArray(menuItem.children)"
+              class="arrow-icon-container"
             >
               <svg-icon name="expandMore" />
             </span>
           </component>
-          <ul class="child-menu-list" v-if="Array.isArray(menuItem.children)">
+          <ul v-if="Array.isArray(menuItem.children)" class="child-menu-list">
             <li
-              class="child-menu-item"
               v-for="childItem of menuItem.children"
-              v-bind:key="childItem.path"
+              :key="childItem.path"
+              class="child-menu-item"
             >
               <router-link
                 active-class="active"
                 class="child-menu-link"
-                v-bind:to="childItem.path"
+                :to="childItem.path"
                 exact
               >
                 {{ childItem.name }}
@@ -73,8 +66,8 @@
 <script lang="js">
 import Vue from 'vue';
 
-import { BASE_PATH } from '@/constants/common';
 import SvgIcon from '@/components/SvgIcon.vue';
+import { getLogoUrl } from '@/utils/common';
 
 export default Vue.extend({
   components: { SvgIcon },
@@ -100,33 +93,29 @@ export default Vue.extend({
   computed: {
     logoUrl() {
       if (this.isCollapsed && !this.isHovered) {
-        return this.brandConfig.small['logo-ext']
-          ? BASE_PATH + '/logo-small.' + this.brandConfig.small['logo-ext']
-          : '';
+        return getLogoUrl(this.brandConfig.small.logo)
       } else {
-        return this.brandConfig.large['logo-ext']
-          ? BASE_PATH + '/logo.' + this.brandConfig.large['logo-ext']
-          : '';
+        return getLogoUrl(this.brandConfig.large.logo)
       }
     },
     brandName() {
       if (this.isCollapsed && !this.isHovered) {
-        return this.brandConfig.small.name ?? '';
+        return this.brandConfig.small.label ?? '';
       } else {
-        return this.brandConfig.large.name ?? '';
+        return this.brandConfig.large.label ?? '';
       }
     },
     brandNameColor() {
       if (this.isCollapsed && !this.isHovered) {
         return (
-          this.brandConfig.small['name-color'] ??
-          this.brandConfig.large['name-color'] ??
+          this.brandConfig.small['label-color'] ??
+          this.brandConfig.large['label-color'] ??
           undefined
         );
       } else {
         return (
-          this.brandConfig.large['name-color'] ??
-          this.brandConfig.small['name-color'] ??
+          this.brandConfig.large['label-color'] ??
+          this.brandConfig.small['label-color'] ??
           undefined
         );
       }
@@ -150,7 +139,6 @@ export default Vue.extend({
       this.isHovered = false;
     },
     toggleMenuItem(itemId) {
-      console.log('toggleMenuItem', itemId);
       const foundItem = this.menuItemList.find(
         menuItem => menuItem.id === itemId
       );

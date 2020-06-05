@@ -16,7 +16,7 @@ export function uploadFile({ scenario, file, onProgress }) {
       }
     });
 
-    request.addEventListener('loadend', event => {
+    request.addEventListener('loadend', () => {
       const isOk = request.status >= 200 && request.status < 300;
 
       if (isOk) {

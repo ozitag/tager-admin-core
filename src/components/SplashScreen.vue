@@ -1,27 +1,28 @@
 <template>
-  <div class="spin-wrapper">
-    <img v-if="Boolean(logoUrl)" v-bind:src="logoUrl" />
+  <div class="spin-wrapper" :style="{ background: backgroundColor }">
+    <img v-if="Boolean(logoUrl)" :src="logoUrl" />
     <div class="spinner"></div>
   </div>
 </template>
 
 <script lang="js">
 import Vue from 'vue';
-import { BASE_PATH } from '@/constants/common';
+import { getLogoUrl } from '@/utils/common';
 
 export default Vue.extend({
   name: 'SplashScreen',
   props: {
-    brandConfig: {
+    config: {
       type: Object,
       required: true
     }
   },
   computed: {
     logoUrl() {
-      return this.brandConfig.small['logo-ext']
-        ? BASE_PATH + '/logo-small.' + this.brandConfig.small['logo-ext']
-        : '';
+      return getLogoUrl(this.config.logo);
+    },
+    backgroundColor() {
+      return this.config.background;
     }
   }
 });

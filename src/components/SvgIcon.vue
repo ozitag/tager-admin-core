@@ -1,5 +1,5 @@
 <template>
-  <component v-bind:is="iconComponent"></component>
+  <component :is="iconComponent"></component>
 </template>
 
 <script lang="js">

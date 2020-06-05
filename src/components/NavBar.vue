@@ -1,22 +1,15 @@
 <template>
-  <div v-bind:class="['navbar', { 'sidebar-collapsed': isSidebarCollapsed }]">
+  <div :class="['navbar', { 'sidebar-collapsed': isSidebarCollapsed }]">
     <div class="navbar-inner">
       <div class="left-block">
-        <base-button variant="icon" v-on:click="toggleSidebar">
+        <base-button variant="icon" @click="toggleSidebar">
           <svg-icon name="menu" />
         </base-button>
 
         <div class="breadcrumbs">
           <ul>
-            <li
-              v-for="(breadcrumb, index) of breadcrumbList"
-              v-bind:key="index"
-            >
-              <router-link
-                exact
-                active-class="active"
-                v-bind:to="breadcrumb.path"
-              >
+            <li v-for="(breadcrumb, index) of breadcrumbList" :key="index">
+              <router-link exact active-class="active" :to="breadcrumb.path">
                 {{ breadcrumb.label }}
               </router-link>
               <svg-icon name="chevronRight" />
@@ -29,8 +22,8 @@
         <span class="user-name">{{ userName }}</span>
         <base-button
           variant="outline-secondary"
-          v-on:click="logout"
-          v-bind:loading="isSignOutInProgress"
+          :loading="isSignOutInProgress"
+          @click="logout"
         >
           {{ $t('logout') }}
         </base-button>
@@ -45,6 +38,7 @@ import Vue from 'vue';
 import { api, RequestError } from '@/services';
 import Button from '@/components/Button.vue';
 import SvgIcon from '@/components/SvgIcon.vue';
+import { isDevelopment, removeTokenAndRedirectToLogin } from '@/utils/common';
 
 function signOut() {
   return api.post({ path: '/self/logout' });
@@ -80,13 +74,20 @@ export default Vue.extend({
         this.isSignOutInProgress = false;
       };
 
+      const handleRedirect = () => {
+        if (isDevelopment()) {
+          this.isSignOutInProgress = false;
+        } else {
+          removeTokenAndRedirectToLogin();
+        }
+      };
+
       this.isSignOutInProgress = true;
 
       signOut()
         .then(response => {
           if (response.success) {
-            localStorage.removeItem('accessToken');
-            window.location.href = '/admin/auth';
+            handleRedirect();
           } else {
             handleError();
           }
@@ -95,14 +96,14 @@ export default Vue.extend({
           console.error(error);
 
           if (error instanceof RequestError && error.status.code === 401) {
-            window.location.href = '/admin/auth';
+            handleRedirect();
           } else {
             handleError();
           }
         });
     },
     toggleSidebar() {
-      this.$emit('sidebar:toggle');
+      this.$emit('sidebar-toggle');
     }
   }
 });

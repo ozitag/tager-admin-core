@@ -8,22 +8,26 @@ import { api, configStore } from '@/services';
 import { BASE_PATH } from '@/constants/common';
 
 const TEST_CONFIG = {
-  APP_NAME: 'PresetBox',
-  TITLE_TEMPLATE: 'PresetBox Admin - {{title}}',
+  APP_NAME: 'OZiTAG_ADMIN',
+  TITLE_TEMPLATE: 'OZiTAG Admin - {{title}}',
   LANGUAGE: 'EN',
   BRAND: {
     small: {
-      'logo-ext': 'svg',
-      name: null,
-      'name-color': null
+      logo: 'logo-small.svg',
+      label: 'OZi',
+      'label-color': '#DD6900'
     },
     large: {
-      'logo-ext': 'svg',
-      name: 'Preset Box',
-      'name-color': '#0b2525'
+      logo: 'logo.svg',
+      label: 'OZiTAG',
+      'label-color': '#DD6900'
     }
   },
-  IS_SPLASH_SCREEN_ENABLED: true
+  SPLASH_SCREEN: {
+    enabled: true,
+    logo: 'logo.svg',
+    background: '#1e1e1e'
+  }
 };
 
 configStore.setConfig(TEST_CONFIG);

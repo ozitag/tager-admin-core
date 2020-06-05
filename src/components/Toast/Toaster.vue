@@ -3,9 +3,9 @@
     <div class="toasts-inner">
       <toast
         v-for="toast of toastList"
-        v-bind:key="toast.id"
-        v-bind:toast="toast"
-        v-on:hide="hideToast(toast.id)"
+        :key="toast.id"
+        :toast="toast"
+        @hide="hideToast(toast.id)"
       />
     </div>
   </div>

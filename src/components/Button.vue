@@ -1,11 +1,11 @@
 <template>
   <button
-    v-bind:class="['button', variant, { loading: loading }]"
-    v-bind:type="type"
-    v-on:click="$emit('click', $event)"
-    v-bind:disabled="disabled || loading"
+    :class="['button', variant, { loading: loading }]"
+    :type="type"
+    :disabled="disabled || loading"
+    @click="$emit('click', $event)"
   >
-    <span class="spinner-wrapper" v-if="loading">
+    <span v-if="loading" class="spinner-wrapper">
       <spinner class="button-spinner" size="28" />
     </span>
 

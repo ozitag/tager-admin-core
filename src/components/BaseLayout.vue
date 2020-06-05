@@ -4,24 +4,21 @@
 
     <splash-screen
       v-show="isSplashScreenVisible"
-      v-bind:brand-config="brandConfig"
+      :config="splashScreenConfig"
     />
     <div v-show="!isSplashScreenVisible">
       <sidebar
-        v-bind:is-collapsed="isSidebarCollapsed"
-        v-bind:menu-item-list="sidebarMenuList"
-        v-bind:brand-config="brandConfig"
+        :is-collapsed="isSidebarCollapsed"
+        :menu-item-list="sidebarMenuList"
+        :brand-config="brandConfig"
       />
       <div
-        v-bind:class="[
-          'page-container',
-          { 'sidebar-collapsed': isSidebarCollapsed }
-        ]"
+        :class="['page-container', { 'sidebar-collapsed': isSidebarCollapsed }]"
       >
         <navbar
-          v-on:sidebar:toggle="handleSidebarToggle"
-          v-bind:is-sidebar-collapsed="isSidebarCollapsed"
-          v-bind:userName="userName"
+          :is-sidebar-collapsed="isSidebarCollapsed"
+          :user-name="userName"
+          @sidebar-toggle="handleSidebarToggle"
         ></navbar>
         <main class="main">
           <slot></slot>
@@ -38,8 +35,9 @@ import ToastPlugin, { ToastProvider } from '@/components/Toast';
 import Sidebar from '@/components/Sidebar.vue';
 import Navbar from '@/components/NavBar.vue';
 import SplashScreen from '@/components/SplashScreen.vue';
-import { api, configStore } from '@/services';
+import { api, configStore, RequestError } from '@/services';
 import { TranslatePlugin } from '@/i18n';
+import { isDevelopment, removeTokenAndRedirectToLogin } from '@/utils/common';
 
 function getProfile() {
   return api.get({ path: '/self' });
@@ -66,34 +64,14 @@ export default Vue.extend({
       isSidebarCollapsed,
       profile: null,
       isLoading: true,
-      isSplashScreenEnabled: Boolean(config.IS_SPLASH_SCREEN_ENABLED),
+      isSplashScreenEnabled: Boolean(config.SPLASH_SCREEN?.enabled),
       isTimeoutInProgress: false
     };
   },
-  mounted() {
-    getProfile()
-      .then(response => {
-        this.profile = response.data;
-        this.isLoading = false;
-      })
-      .catch(error => {
-        console.error(error);
-
-        this.$toast({
-          variant: 'danger',
-          title: 'Error',
-          body: 'Server error'
-        });
-      });
-
-    if (this.isSplashScreenEnabled) {
-      this.isTimeoutInProgress = true;
-      setTimeout(() => {
-        this.isTimeoutInProgress = false;
-      }, 3000);
-    }
-  },
   computed: {
+    splashScreenConfig() {
+      return configStore.getConfig().SPLASH_SCREEN;
+    },
     brandConfig() {
       return configStore.getConfig().BRAND;
     },
@@ -105,6 +83,37 @@ export default Vue.extend({
         this.isSplashScreenEnabled &&
         (this.isTimeoutInProgress || this.isLoading)
       );
+    }
+  },
+  mounted() {
+    getProfile()
+      .then(response => {
+        this.profile = response.data;
+        this.isLoading = false;
+      })
+      .catch(error => {
+        console.error(error);
+
+        if (error instanceof RequestError && error.status.code === 401) {
+          if (isDevelopment()) {
+            this.isLoading = false;
+          } else {
+            removeTokenAndRedirectToLogin();
+          }
+        } else {
+          this.$toast({
+            variant: 'danger',
+            title: 'Error',
+            body: 'Server error'
+          });
+        }
+      });
+
+    if (this.isSplashScreenEnabled) {
+      this.isTimeoutInProgress = true;
+      setTimeout(() => {
+        this.isTimeoutInProgress = false;
+      }, 3000);
     }
   },
   methods: {

@@ -1,9 +1,9 @@
 <template>
   <div class="toast-wrapper">
-    <div v-bind:class="['toast', toast.variant]">
+    <div :class="['toast', toast.variant]">
       <header class="toast-header">
         <strong>{{ toast.title }}</strong>
-        <button class="close-button" v-on:click="hideToast">
+        <button class="close-button" @click="hideToast">
           <svg-icon name="clear" />
         </button>
       </header>
@@ -18,8 +18,8 @@ import Vue from 'vue';
 import SvgIcon from '@/components/SvgIcon.vue';
 
 export default Vue.extend({
-  components: { SvgIcon },
   name: 'Toast',
+  components: { SvgIcon },
   props: {
     toast: Object
   },
