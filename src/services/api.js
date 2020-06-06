@@ -11,7 +11,7 @@ export const HttpMethods = {
 
 class ApiService {
   constructor() {
-    this.apiOrigin = '';
+    this.apiOrigin = process.env.VUE_APP_API_ORIGIN ?? '';
   }
 
   setApiOrigin(origin) {

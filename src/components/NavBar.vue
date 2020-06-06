@@ -38,7 +38,7 @@ import Vue from 'vue';
 import { api, RequestError } from '@/services';
 import Button from '@/components/Button.vue';
 import SvgIcon from '@/components/SvgIcon.vue';
-import { isDevelopment, removeTokenAndRedirectToLogin } from '@/utils/common';
+import { isDevelopment, isProduction, removeTokenAndRedirectToLogin } from '@/utils/common';
 
 function signOut() {
   return api.post({ path: '/self/logout' });
@@ -95,10 +95,15 @@ export default Vue.extend({
         .catch(error => {
           console.error(error);
 
-          if (error instanceof RequestError && error.status.code === 401) {
-            handleRedirect();
+          if (error instanceof RequestError && error.status.code === 401 && isProduction()) {
+            removeTokenAndRedirectToLogin();
           } else {
-            handleError();
+            this.$toast({
+              variant: 'danger',
+              title: 'Error',
+              body: 'Server error'
+            });
+            this.isSignOutInProgress = false;
           }
         });
     },

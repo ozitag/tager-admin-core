@@ -14,10 +14,14 @@ export function isDevelopment() {
   return process.env.NODE_ENV === 'development';
 }
 
+export function isProduction() {
+  return process.env.NODE_ENV === 'production';
+}
+
 export function removeTokenAndRedirectToLogin() {
   localStorage.removeItem('accessToken');
 
-  if (!isDevelopment()) {
+  if (isProduction()) {
     window.location.href = '/admin/auth';
   }
 }

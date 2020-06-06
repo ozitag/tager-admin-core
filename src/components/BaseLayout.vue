@@ -37,7 +37,7 @@ import Navbar from '@/components/NavBar.vue';
 import SplashScreen from '@/components/SplashScreen.vue';
 import { api, configStore, RequestError } from '@/services';
 import { TranslatePlugin } from '@/i18n';
-import { isDevelopment, removeTokenAndRedirectToLogin } from '@/utils/common';
+import { isProduction, removeTokenAndRedirectToLogin } from '@/utils/common';
 
 function getProfile() {
   return api.get({ path: '/self' });
@@ -94,13 +94,15 @@ export default Vue.extend({
       .catch(error => {
         console.error(error);
 
-        if (error instanceof RequestError && error.status.code === 401) {
-          if (isDevelopment()) {
-            this.isLoading = false;
-          } else {
-            removeTokenAndRedirectToLogin();
-          }
+        if (
+          error instanceof RequestError &&
+          error.status.code === 401 &&
+          isProduction()
+        ) {
+          removeTokenAndRedirectToLogin();
         } else {
+          this.isLoading = false;
+
           this.$toast({
             variant: 'danger',
             title: 'Error',

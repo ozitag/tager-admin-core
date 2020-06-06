@@ -4,7 +4,7 @@ import VueRouter from 'vue-router';
 import '@/assets/css/index.css';
 
 import BaseLayout from '@/components/BaseLayout.vue';
-import { api, configStore } from '@/services';
+import { configStore } from '@/services';
 import { BASE_PATH } from '@/constants/common';
 
 const TEST_CONFIG = {
@@ -31,7 +31,6 @@ const TEST_CONFIG = {
 };
 
 configStore.setConfig(TEST_CONFIG);
-api.setApiOrigin('https://presetbox.dev.ozitag.com');
 
 const router = new VueRouter({
   mode: 'history',
