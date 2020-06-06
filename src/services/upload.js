@@ -41,10 +41,9 @@ export function uploadFile({ scenario, file, onProgress }) {
 
     const query = `?scenario=${scenario ?? 'default'}`;
 
-    request.open(
-      'POST',
-      'https://presetbox.dev.ozitag.com/api/admin/upload' + query
-    );
+    const url = [api.getApiOrigin(), '/api/admin/upload', query].join('');
+
+    request.open('POST', url);
 
     const accessToken = api.getAccessToken();
     if (accessToken) {

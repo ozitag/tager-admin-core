@@ -14,6 +14,7 @@ type RequestParams = {
 type ApiRequest = (options: RequestParams) => Promise<any>;
 type ApiType = {
   setApiOrigin: (origin: string) => void;
+  getApiOrigin: () => string;
   get: ApiRequest;
   post: ApiRequest;
   put: ApiRequest;

@@ -18,6 +18,10 @@ class ApiService {
     this.apiOrigin = origin;
   }
 
+  getApiOrigin() {
+    return this.apiOrigin;
+  }
+
   getAccessToken() {
     return localStorageService.get('accessToken');
   }
