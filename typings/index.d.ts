@@ -37,10 +37,6 @@ type ConfigService = {
   getConfig: <T = any>() => T;
 };
 
-type CoreConstants = {
-  BASE_PATH: string;
-};
-
 export type ParsedResponseBody =
   | boolean
   | string
@@ -58,7 +54,6 @@ declare class RequestError extends Error {
 export const BaseLayout: VueConstructor<Vue>;
 export const api: ApiType;
 export const configStore: ConfigService;
-export const CONSTANTS: CoreConstants;
 
 export type ToastVariant = 'success' | 'warning' | 'danger';
 

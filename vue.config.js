@@ -4,7 +4,7 @@ module.exports = {
       entry: 'src/dev.js'
     }
   },
-  publicPath: '/admin',
+  publicPath: process.env.VUE_APP_PUBLIC_PATH || '/',
   chainWebpack: config => {
     const svgRule = config.module.rule('svg');
 

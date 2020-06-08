@@ -5,7 +5,6 @@ import '@/assets/css/index.css';
 
 import BaseLayout from '@/components/BaseLayout.vue';
 import { configStore } from '@/services';
-import { BASE_PATH } from '@/constants/common';
 
 const TEST_CONFIG = {
   APP_NAME: 'OZiTAG_ADMIN',
@@ -34,7 +33,7 @@ configStore.setConfig(TEST_CONFIG);
 
 const router = new VueRouter({
   mode: 'history',
-  base: BASE_PATH,
+  base: process.env.BASE_URL,
   routes: []
 });
 

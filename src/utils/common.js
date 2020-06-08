@@ -1,5 +1,3 @@
-import { BASE_PATH } from '@/constants/common';
-
 export function isAbsoluteUrl(url) {
   return ['https:', 'http:'].some(protocol => url.startsWith(protocol));
 }
@@ -7,7 +5,7 @@ export function isAbsoluteUrl(url) {
 export function getLogoUrl(logoPath) {
   if (!logoPath) return null;
 
-  return isAbsoluteUrl(logoPath) ? logoPath : `${BASE_PATH}/${logoPath}`;
+  return isAbsoluteUrl(logoPath) ? logoPath : process.env.BASE_URL + logoPath;
 }
 
 export function isDevelopment() {
