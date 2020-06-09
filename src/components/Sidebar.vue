@@ -64,8 +64,10 @@
           </li>
         </ul>
         <div class="footer">
-          <h5>TAGER</h5>
-          <span v-if="Boolean(appVersion)">v{{ appVersion }}</span>
+          <span class="brand">TAGER</span>
+          <span v-if="Boolean(appVersion)" class="version-block">
+            <span class="version-word">ver.</span> {{ appVersion }}
+          </span>
         </div>
       </div>
     </div>
@@ -104,9 +106,9 @@ export default Vue.extend({
   computed: {
     logoUrl() {
       if (this.isCollapsed && !this.isHovered) {
-        return getLogoUrl(this.brandConfig.small.logo)
+        return getLogoUrl(this.brandConfig.small.logo);
       } else {
-        return getLogoUrl(this.brandConfig.large.logo)
+        return getLogoUrl(this.brandConfig.large.logo);
       }
     },
     brandName() {
@@ -165,8 +167,8 @@ export default Vue.extend({
 
       return foundItem.children
         ? foundItem.children.some(
-            childItem => childItem.path === this.$route.path
-          )
+          childItem => childItem.path === this.$route.path
+        )
         : foundItem.path === this.$route.path;
     },
     isMenuItemOpen(itemId) {
@@ -209,6 +211,17 @@ export default Vue.extend({
 
     .menu-link-icon-container {
       margin-right: 0;
+    }
+
+    .footer {
+      .brand {
+        letter-spacing: normal;
+        font-size: 16px;
+      }
+
+      .version-word {
+        display: none;
+      }
     }
   }
 }
@@ -273,6 +286,7 @@ export default Vue.extend({
 
 .menu-item {
   cursor: pointer;
+
   &:hover {
     background-color: rgba(0, 0, 0, 0.03);
   }
@@ -371,7 +385,18 @@ export default Vue.extend({
 }
 
 .footer {
-  padding: 1rem 0.5rem;
+  padding: 0.75rem 0.5rem 1rem;
   text-align: center;
+  border-top: 1px solid rgba(0, 0, 0, 0.0625);
+
+  .brand {
+    display: block;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+  }
+
+  .version-block {
+    font-size: 0.75rem;
+  }
 }
 </style>
