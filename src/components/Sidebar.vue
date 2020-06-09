@@ -13,52 +13,61 @@
           {{ brandName }}
         </span>
       </div>
-      <ul
-        class="menu-list"
-        @mouseover="handleMouseOver"
-        @mouseleave="handleMouseLeave"
-      >
-        <li
-          v-for="menuItem in menuItemList"
-          :key="menuItem.id"
-          :class="['menu-item', { active: isMenuItemActive(menuItem.id) }]"
-          :data-expanded="Boolean(menuItem.isOpen)"
+
+      <div class="sidebar-body">
+        <ul
+          class="menu-list"
+          @mouseover="handleMouseOver"
+          @mouseleave="handleMouseLeave"
         >
-          <component
-            :is="menuItem.children ? 'button' : 'router-link'"
-            class="menu-link"
-            :to="menuItem.children ? undefined : menuItem.path"
-            @click="menuItem.children ? toggleMenuItem(menuItem.id) : undefined"
+          <li
+            v-for="menuItem in menuItemList"
+            :key="menuItem.id"
+            :class="['menu-item', { active: isMenuItemActive(menuItem.id) }]"
+            :data-expanded="isMenuItemOpen(menuItem.id)"
           >
-            <span class="menu-link-icon-container">
-              <svg-icon :name="menuItem.icon" />
-            </span>
-            <span class="menu-link-name">{{ menuItem.name }}</span>
-            <span
-              v-show="Array.isArray(menuItem.children)"
-              class="arrow-icon-container"
+            <component
+              :is="menuItem.children ? 'button' : 'router-link'"
+              class="menu-link"
+              :to="menuItem.children ? undefined : menuItem.path"
+              @click="
+                menuItem.children ? toggleMenuItem(menuItem.id) : undefined
+              "
             >
-              <svg-icon name="expandMore" />
-            </span>
-          </component>
-          <ul v-if="Array.isArray(menuItem.children)" class="child-menu-list">
-            <li
-              v-for="childItem of menuItem.children"
-              :key="childItem.path"
-              class="child-menu-item"
-            >
-              <router-link
-                active-class="active"
-                class="child-menu-link"
-                :to="childItem.path"
-                exact
+              <span class="menu-link-icon-container">
+                <svg-icon :name="menuItem.icon" />
+              </span>
+              <span class="menu-link-name">{{ menuItem.name }}</span>
+              <span
+                v-show="Array.isArray(menuItem.children)"
+                class="arrow-icon-container"
               >
-                {{ childItem.name }}
-              </router-link>
-            </li>
-          </ul>
-        </li>
-      </ul>
+                <svg-icon name="expandMore" />
+              </span>
+            </component>
+            <ul v-if="Array.isArray(menuItem.children)" class="child-menu-list">
+              <li
+                v-for="childItem of menuItem.children"
+                :key="childItem.path"
+                class="child-menu-item"
+              >
+                <router-link
+                  active-class="active"
+                  class="child-menu-link"
+                  :to="childItem.path"
+                  exact
+                >
+                  {{ childItem.name }}
+                </router-link>
+              </li>
+            </ul>
+          </li>
+        </ul>
+        <div class="footer">
+          <h5>TAGER</h5>
+          <span v-if="Boolean(appVersion)">v{{ appVersion }}</span>
+        </div>
+      </div>
     </div>
   </aside>
 </template>
@@ -87,7 +96,9 @@ export default Vue.extend({
   },
   data() {
     return {
-      isHovered: false
+      isHovered: false,
+      openItemIdList: [],
+      appVersion: process.env.VUE_APP_VERSION
     };
   },
   computed: {
@@ -139,12 +150,10 @@ export default Vue.extend({
       this.isHovered = false;
     },
     toggleMenuItem(itemId) {
-      const foundItem = this.menuItemList.find(
-        menuItem => menuItem.id === itemId
-      );
-
-      if (foundItem) {
-        foundItem.isOpen = !foundItem.isOpen;
+      if (this.openItemIdList.includes(itemId)) {
+        this.openItemIdList = this.openItemIdList.filter(id => id !== itemId);
+      } else {
+        this.openItemIdList.push(itemId);
       }
     },
     isMenuItemActive(itemId) {
@@ -159,6 +168,9 @@ export default Vue.extend({
             childItem => childItem.path === this.$route.path
           )
         : foundItem.path === this.$route.path;
+    },
+    isMenuItemOpen(itemId) {
+      return this.openItemIdList.includes(itemId);
     }
   }
 });
@@ -247,11 +259,16 @@ export default Vue.extend({
   flex: 1;
 }
 
-.menu-list {
-  list-style-type: none;
+.sidebar-body {
   height: calc(100vh - 65px);
-  padding: 30px 0 0;
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-list {
+  flex: 1;
+  list-style-type: none;
+  padding: 2rem 0;
 }
 
 .menu-item {
@@ -351,5 +368,10 @@ export default Vue.extend({
     font-weight: 500;
     text-decoration: underline;
   }
+}
+
+.footer {
+  padding: 1rem 0.5rem;
+  text-align: center;
 }
 </style>

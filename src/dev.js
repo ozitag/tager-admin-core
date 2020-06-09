@@ -31,13 +31,57 @@ const TEST_CONFIG = {
 
 configStore.setConfig(TEST_CONFIG);
 
+Vue.use(VueRouter);
+
 const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes: []
 });
 
+const sidebarMenuList = [
+  {
+    id: 'catalog',
+    name: 'Catalog',
+    path: '',
+    icon: 'viewList',
+    children: [
+      {
+        path: '/presets',
+        name: 'All presets'
+      },
+      {
+        path: '/presets/create',
+        name: 'Create presets'
+      }
+    ]
+  },
+
+  {
+    id: 'orders',
+    name: 'Orders',
+    path: '/orders',
+    icon: 'assignment'
+  },
+  {
+    id: 'settings',
+    name: 'Settings',
+    path: '',
+    icon: 'settings',
+    children: [
+      {
+        path: '/settings/common',
+        name: 'Common'
+      },
+      {
+        path: '/settings/seo',
+        name: 'SEO'
+      }
+    ]
+  }
+];
+
 new Vue({
   router,
-  render: h => h(BaseLayout)
+  render: h => h(BaseLayout, { props: { sidebarMenuList } })
 }).$mount('#app');
